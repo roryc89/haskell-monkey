@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d69b04b8f82cb2542981814afdaf62fd9e9c002b29c8fcb61fdecab2f5d3fac4
+-- hash: 24122f569cbe7288880f13c7b5d2bb0b2a3a7628f20125194b6e2963cb42986d
 
 name:           haskell-monkey
 version:        0.1.0.0
@@ -28,8 +28,8 @@ source-repository head
 library
   exposed-modules:
       Lib
-      Token.Parse
-      Token.Token
+      Monkey.Token.Parse
+      Monkey.Token.Token
   other-modules:
       Paths_haskell_monkey
   hs-source-dirs:

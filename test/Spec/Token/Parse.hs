@@ -6,8 +6,8 @@ module Spec.Token.Parse where
 import Data.Text as T
 import NeatInterpolation
 import Test.Hspec
-import Token.Token
-import Token.Parse
+import Monkey.Token.Token
+import Monkey.Token.Parse
 
 test = 
   describe "Token.Token" $ do
@@ -65,18 +65,7 @@ let result = add(five, ten);|];
                 Semicolon ]
 
           parseMonkeyTokens input `shouldBe` Right expected
---           let input = [text|!-/*5;
--- 5 < 10 > 5;
 
---           |];
--- if (5 < 10) {
---     return true;
--- } else {
---     return false;
--- }
-
--- 10 == 10;
--- 10 != 9;
       it "should parse operators" $ do 
           let input = [text|!-/*5;
 5 < 10 > 5;

@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Token.Parse where
+module Monkey.Token.Parse where
 
 import Data.Char
 import           Control.Monad
@@ -11,7 +11,7 @@ import           Data.Void
 import           Text.Megaparsec            hiding (State)
 import           Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
-import           Token.Token
+import           Monkey.Token.Token
 
 type Parser t = Parsec Void Text t
 

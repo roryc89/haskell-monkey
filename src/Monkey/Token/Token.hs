@@ -1,4 +1,4 @@
-module Token.Token where
+module Monkey.Token.Token where
 
 import           Data.Text                  (Text)
 
