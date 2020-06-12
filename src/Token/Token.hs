@@ -1,14 +1,11 @@
 module Token.Token where
-    
+
 import           Data.Text                  (Text)
 
 data MonkeyToken
-    = Illegal
-    | Eof
+    = Illegal Char
     | Ident Text
     | Int Integer
-    | Assign
-    | Plus
     | Comma
     | Semicolon
     | Lparen
@@ -17,5 +14,18 @@ data MonkeyToken
     | Rbrace
     | Function
     | Let
+    -- OPERATORS
+    | Eq
+    | NotEq
+    | Lt
+    | Gt
+    | Plus
+    | Assign
+    | Minus 
+    | Bang
+    | Asterix
+    | Slash
+
+
     deriving(Eq, Show)
 

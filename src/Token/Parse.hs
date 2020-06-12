@@ -16,44 +16,43 @@ import           Token.Token
 type Parser t = Parsec Void Text t
 
 parseMonkeyTokens :: Text -> Either (ParseErrorBundle Text Void) [MonkeyToken]
-parseMonkeyTokens = runParser (manyTill monkeyTokenParser eof) ""
+parseMonkeyTokens = runParser (manyTill (L.lexeme sc monkeyTokenParser) eof) ""
 
+sc :: Parser ()
+sc = L.space
+  space1                        
+  (L.skipLineComment "---")      
+  (L.skipBlockComment "///*" "*///")
+  
 monkeyTokenParser :: Parser MonkeyToken
-monkeyTokenParser =
-  Eof <$ eof
-  <|> Assign <$ stringS "="
-  <|> Plus <$ stringS "+"
-  <|> Comma <$ stringS ","
-  <|> Semicolon <$ charS ';'
-  <|> Lparen <$ stringS "("
-  <|> Rparen <$ stringS ")"
-  <|> Lbrace <$ stringS "{"
-  <|> Rbrace <$ stringS "}"
-  <|> Function <$ stringS "fn"
-  <|> Let <$ stringS "let"
-  <|> Ident <$> identParser
-  <|> Int <$> intParser
-  <|> Illegal <$ anySingle
-
-stringS :: Text -> Parser Text
-stringS s = do
-    result <- string s
-    space
-    pure s
-
-charS :: Char -> Parser Char
-charS s = do
-    result <- char s
-    space
-    pure s
-    -- L.lexeme L.string
-    -- try space *> string s
+monkeyTokenParser = choice
+  [ Eq <$ string "=="
+  , NotEq <$ string "!="
+  , Assign <$ char '='
+  , Plus <$ char '+'
+  , Comma <$ char ','
+  , Semicolon <$ char ';'
+  , Lparen <$ char '('
+  , Rparen <$ char ')'
+  , Lbrace <$ char '{'
+  , Rbrace <$ char '}'
+  , Minus  <$ char '-'
+  , Bang <$ char '!'
+  , Asterix <$ char '*'
+  , Slash <$ char '/'
+  , Lt <$ char '<'
+  , Gt <$ char '>'
+  , Function <$ string "fn"
+  , Let <$ string "let"
+  , Ident <$> identParser
+  , Int <$> intParser
+  , Illegal <$> anySingle
+  ]
 
 identParser :: Parser Text
 identParser = do
   first :: Char <- letterChar
   rest :: [Char] <- many alphaNumChar 
-  space
   pure $ T.pack (first : rest) 
 
 intParser :: Parser Integer

@@ -17,27 +17,14 @@ test =
 
 
       it "should parse functions" $ do 
---           let input = [text|let five = 5;
--- let ten = 10;
+          let input = [text|let five = 5;
+let ten = 10;
 
--- let add = fn(x, y) {
---   x + y;
--- };
+let add = fn(x, y) {
+  x + y;
+};
 
---           let input = "let five = 5;\
--- let ten = 10;\
--- \
--- let add = fn(x, y) {\
---   x + y;\
--- };"
-
-          let input = T.unlines [
-                "let five = 5;",
-                "let ten = 10;",
-                "let add = fn(x, y) {",
-                "  x + y;",
-                "};",
-                "let result = add(five, ten);"]
+let result = add(five, ten);|];
 
           let expected = [ 
                 Let,
@@ -76,6 +63,39 @@ test =
                 Ident "ten",
                 Rparen,
                 Semicolon ]
+
+          parseMonkeyTokens input `shouldBe` Right expected
+--           let input = [text|!-/*5;
+-- 5 < 10 > 5;
+
+--           |];
+-- if (5 < 10) {
+--     return true;
+-- } else {
+--     return false;
+-- }
+
+-- 10 == 10;
+-- 10 != 9;
+      it "should parse operators" $ do 
+          let input = [text|!-/*5;
+5 < 10 > 5;
+
+          |];
+
+          let expected = [
+                Bang,
+                Minus,
+                Slash,
+                Asterix,
+                Int 5,
+                Semicolon,
+                Int 5,
+                Lt,
+                Int 10,
+                Gt, 
+                Int 5,
+                Semicolon]
 
           parseMonkeyTokens input `shouldBe` Right expected
 
