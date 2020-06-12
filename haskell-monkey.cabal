@@ -1,0 +1,77 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: d69b04b8f82cb2542981814afdaf62fd9e9c002b29c8fcb61fdecab2f5d3fac4
+
+name:           haskell-monkey
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/haskell-monkey#readme>
+homepage:       https://github.com/githubuser/haskell-monkey#readme
+bug-reports:    https://github.com/githubuser/haskell-monkey/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2020 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/haskell-monkey
+
+library
+  exposed-modules:
+      Lib
+      Token.Parse
+      Token.Token
+  other-modules:
+      Paths_haskell_monkey
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , hspec
+    , megaparsec
+    , neat-interpolation
+    , text
+  default-language: Haskell2010
+
+executable haskell-monkey-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_haskell_monkey
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , haskell-monkey
+    , hspec
+    , megaparsec
+    , neat-interpolation
+    , text
+  default-language: Haskell2010
+
+test-suite haskell-monkey-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Spec.Token.Parse
+      Paths_haskell_monkey
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , haskell-monkey
+    , hspec
+    , megaparsec
+    , neat-interpolation
+    , text
+  default-language: Haskell2010
