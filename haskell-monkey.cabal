@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 24122f569cbe7288880f13c7b5d2bb0b2a3a7628f20125194b6e2963cb42986d
+-- hash: 04a8b685b70e6728463396e3f52ea718b88110fd5f060cc7d1131179d87c8be9
 
 name:           haskell-monkey
 version:        0.1.0.0
@@ -28,17 +28,24 @@ source-repository head
 library
   exposed-modules:
       Lib
-      Monkey.Token.Parse
-      Monkey.Token.Token
+      Monkey.Ast
+      Monkey.Lexer
+      Monkey.Parser
+      Monkey.Parser.Operator
+      Monkey.Repl
+      Monkey.Token
   other-modules:
       Paths_haskell_monkey
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , containers
     , hspec
     , megaparsec
+    , mtl
     , neat-interpolation
+    , parser-combinators
     , text
   default-language: Haskell2010
 
@@ -51,10 +58,13 @@ executable haskell-monkey-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , haskell-monkey
     , hspec
     , megaparsec
+    , mtl
     , neat-interpolation
+    , parser-combinators
     , text
   default-language: Haskell2010
 
@@ -62,16 +72,20 @@ test-suite haskell-monkey-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Spec.Token.Parse
+      Spec.Monkey.Lexer
+      Spec.Monkey.Parser
       Paths_haskell_monkey
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , haskell-monkey
     , hspec
     , megaparsec
+    , mtl
     , neat-interpolation
+    , parser-combinators
     , text
   default-language: Haskell2010

@@ -25,6 +25,9 @@ dependencies:
 - megaparsec
 - text
 - neat-interpolation
+- containers
+- parser-combinators
+- mtl
 
 library:
   source-dirs: src

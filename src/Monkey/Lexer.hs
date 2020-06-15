@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Monkey.Token.Parse where
+module Monkey.Lexer where
 
 import Data.Char
 import           Control.Monad
@@ -11,23 +11,24 @@ import           Data.Void
 import           Text.Megaparsec            hiding (State)
 import           Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
-import           Monkey.Token.Token
+import           Monkey.Token
 
 type Parser t = Parsec Void Text t
 
-parseMonkeyTokens :: Text -> Either (ParseErrorBundle Text Void) [MonkeyToken]
-parseMonkeyTokens = runParser (manyTill (L.lexeme sc monkeyTokenParser) eof) ""
+parseMonkeyTokens :: Text -> Either (ParseErrorBundle Text Void) MonkeyTokens
+parseMonkeyTokens =  runParser (MonkeyTokens <$> manyTill (L.lexeme sc monkeyTokenParser) eof) ""
 
 sc :: Parser ()
 sc = L.space
   space1                        
   (L.skipLineComment "---")      
   (L.skipBlockComment "///*" "*///")
-  
+
 monkeyTokenParser :: Parser MonkeyToken
 monkeyTokenParser = choice
   [ Eq <$ string "=="
   , NotEq <$ string "!="
+  , Newline <$ char '\n'
   , Assign <$ char '='
   , Plus <$ char '+'
   , Comma <$ char ','

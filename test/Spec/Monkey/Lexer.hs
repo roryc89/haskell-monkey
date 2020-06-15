@@ -1,19 +1,21 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module Spec.Token.Parse where
+module Spec.Monkey.Lexer where
 
 import Data.Text as T
 import NeatInterpolation
 import Test.Hspec
-import Monkey.Token.Token
-import Monkey.Token.Parse
+import Monkey.Token
+import Monkey.Lexer
+
+rightMonkeys l = Right (MonkeyTokens l)
 
 test = 
-  describe "Token.Token" $ do
+  describe "Monkey.Lexer" $ do
       it "should parse a simple input" $ do
           let input = "=+(){},;"
-          parseMonkeyTokens input `shouldBe` Right [ Assign, Plus, Lparen, Rparen, Lbrace, Rbrace, Comma, Semicolon ]
+          parseMonkeyTokens input `shouldBe` rightMonkeys [ Assign, Plus, Lparen, Rparen, Lbrace, Rbrace, Comma, Semicolon ]
 
 
       it "should parse functions" $ do 
@@ -64,7 +66,7 @@ let result = add(five, ten);|];
                 Rparen,
                 Semicolon ]
 
-          parseMonkeyTokens input `shouldBe` Right expected
+          parseMonkeyTokens input `shouldBe` rightMonkeys expected
 
       it "should parse operators" $ do 
           let input = [text|!-/*5;
@@ -86,7 +88,7 @@ let result = add(five, ten);|];
                 Int 5,
                 Semicolon]
 
-          parseMonkeyTokens input `shouldBe` Right expected
+          parseMonkeyTokens input `shouldBe` rightMonkeys expected
 
 
 
