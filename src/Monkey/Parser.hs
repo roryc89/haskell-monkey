@@ -45,6 +45,7 @@ statementParser =
     [ letParser
     , ifParser
     , functionDeclarationParser
+    , returnParser
     , expressionStatementParser
     ]
 
@@ -83,6 +84,20 @@ blockParser p = between (single T.Lbrace) (single T.Rbrace) p
 
 functionDeclarationParser :: Parser Statement
 functionDeclarationParser = do 
+    single T.Function 
+    args <- betweenParens $ sepBy identParser (single T.Comma)
+    body <- blockParserMany
+    pure $ FunctionDeclaration args body
+
+returnParser :: Parser Statement
+returnParser = do 
+    single $ T.Ident "return"
+    result <- exprParser
+    single T.Semicolon
+    pure $ Return result
+
+callExprParser :: Parser Statement
+callExprParser = do 
     single T.Function 
     args <- betweenParens $ sepBy identParser (single T.Comma)
     body <- blockParserMany
@@ -134,6 +149,3 @@ data ErrorContainer
     = TokenParseErrors  (ParseErrorBundle MonkeyTokens Void)
     | TextParseErrors (ParseErrorBundle Text Void)
     deriving(Eq, Show)
-
--- operatorTable :: [[Operator Parser Expr]]
--- operatorTable = undefined -- TODO

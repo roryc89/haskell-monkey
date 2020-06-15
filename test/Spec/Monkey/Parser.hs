@@ -153,7 +153,13 @@ if(true){
 
       it "should parse function declarations" $ do
           let input = [text|
-fn(x, y){ x + y; }
+fn (x, y){ 
+  x + y; 
+}
+
+fn(){ 
+  return x + 1;
+}
 |];
 
           let expected = 
@@ -161,7 +167,40 @@ fn(x, y){ x + y; }
                     ["x", "y"]
                     [ ExpressionStatement $ Plus (Identifier "x") (Identifier "y")
                     ]
+                , FunctionDeclaration 
+                    []
+                    [ Return $ Plus (Identifier "x") (Int 1)
+                    ]
                 ]
                 
 
           parseProgram input `shouldBe` Right expected
+
+      it "should parse simple call expressions" $ do
+          let input = [text|
+myFn(1, 2);
+otherFn();
+|];
+
+          let expected = 
+                [ ExpressionStatement $ CallExpression (Identifier "myFn") [Int 1, Int 2]
+                , ExpressionStatement $ CallExpression (Identifier "otherFn") []
+                ]
+                
+
+          parseProgram input `shouldBe` Right expected
+--       it "should parse higher order call expressions" $ do
+--           let input = [text|
+-- higherFn1(x)();
+-- higherFn2(1, fn(x) {
+-- });
+-- |];
+
+--           let expected = 
+--                 [ ExpressionStatement $ CallExpression (CallExpression (Identifier "higherFn1") [Identifier "x"]) []
+--                 , ExpressionStatement $ CallExpression (Identifier "otherFn") []
+--                 ]
+                
+
+--           parseProgram input `shouldBe` Right expected
+-- ExpressionStatement $ CallExpression (CallExpression (Identifier "higherFn1") [Identifier "x"]) []

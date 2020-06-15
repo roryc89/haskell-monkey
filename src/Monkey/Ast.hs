@@ -20,10 +20,12 @@ data Statement
     | ExpressionStatement Expr
     | If Expr [Statement] [Statement]
     | FunctionDeclaration [Text] [Statement]
+    | Return Expr
     deriving(Show, Eq)
 
 data Expr
     = Identifier Text
+    | CallExpression Expr [Expr]
     | Parens Expr
     | BoolE Bool
     | Int Integer
