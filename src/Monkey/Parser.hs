@@ -70,44 +70,23 @@ exprParser = makeExprParser exprTerm operatorTable
 exprTerm :: Parser Expr
 exprTerm = choice $
   [ intParser
-  , prefixParser T.Bang Bang
-  , prefixParser T.Minus MinusPrefix
+  , boolParser
   , Identifier <$> identParser
   ]
-
--- infixParsers = map (\(tok, operator) -> infixParser tok operator)
---     [ (T.Plus, Plus)
---     , (T.Minus, Minus)
---     , (T.Asterix, Times)
---     , (T.Gt, Gt)
---     , (T.Lt, Lt)
---     , (T.Eq, Eq)
---     , (T.NotEq, NotEq)
---     ]
-
-prefixParser :: 
-    T.MonkeyToken
-    -> (Expr -> a)
-    -> Parser a
-prefixParser token prefix = do 
-    single token
-    prefix <$> exprParser
-
-infixParser :: 
-    T.MonkeyToken
-    -> (Expr -> Expr -> a)
-    -> Parser a
-infixParser token operator = do
-    left <- exprParser
-    single token
-    right <- exprParser
-    pure $ operator left right
 
 intParser :: Parser Expr
 intParser = 
     tokenNoErr
         \t -> case t of
             T.Int i -> Just $ Int i
+            _ -> Nothing
+
+boolParser :: Parser Expr
+boolParser = 
+    tokenNoErr
+        \t -> case t of
+            T.Ident "true" -> Just $ BoolE True
+            T.Ident "false" -> Just $ BoolE False
             _ -> Nothing
 
 tokenNoErr :: (Token MonkeyTokens -> Maybe a) -> Parser a

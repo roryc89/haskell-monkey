@@ -22,6 +22,7 @@ data Statement
 
 data Expr
     = Identifier Text
+    | BoolE Bool
     | Int Integer
     | Bang Expr
     | MinusPrefix Expr

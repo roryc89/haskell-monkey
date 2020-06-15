@@ -76,3 +76,20 @@ let foobar = 83838383;|];
                 ]
 
           parseProgram input `shouldBe` Right expected
+
+      it "should parse booleans" $ do
+          let input = [text|
+true;
+false;
+3 > 5 == false;
+3 < 5 == true;
+|];
+
+          let expected = 
+                [ ExpressionStatement $ BoolE True
+                , ExpressionStatement $ BoolE False
+                , ExpressionStatement $ Eq (Gt (Int 3) (Int 5)) (BoolE False)
+                , ExpressionStatement $ Eq (Lt (Int 3) (Int 5)) (BoolE True)
+                ]
+
+          parseProgram input `shouldBe` Right expected
