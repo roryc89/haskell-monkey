@@ -132,7 +132,7 @@ false;
 
           parseProgram input `shouldBe` Right expected
 
-      it "should parse an if statement" $ do
+      it "should parse if statemenst" $ do
           let input = [text|
 if(true){
   true;
@@ -142,11 +142,26 @@ if(true){
 |];
 
           let expected = 
-                If (BoolE True) 
+                [ If (BoolE True) 
                     [ ExpressionStatement $ BoolE True
                     ]
                     [ ExpressionStatement $ BoolE False
                     ]
+                ]
+                
+          parseProgram input `shouldBe` Right expected
+
+      it "should parse function declarations" $ do
+          let input = [text|
+fn(x, y){ x + y; }
+|];
+
+          let expected = 
+                [ FunctionDeclaration 
+                    ["x", "y"]
+                    [ ExpressionStatement $ Plus (Identifier "x") (Identifier "y")
+                    ]
+                ]
                 
 
-          parseTokensThenRunParser ifParser input `shouldBe` Right expected
+          parseProgram input `shouldBe` Right expected

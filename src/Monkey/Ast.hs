@@ -19,6 +19,7 @@ data Statement
     = Let Text Expr
     | ExpressionStatement Expr
     | If Expr [Statement] [Statement]
+    | FunctionDeclaration [Text] [Statement]
     deriving(Show, Eq)
 
 data Expr

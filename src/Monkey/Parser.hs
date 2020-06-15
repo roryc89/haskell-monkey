@@ -44,6 +44,7 @@ statementParser =
   choice 
     [ letParser
     , ifParser
+    , functionDeclarationParser
     , expressionStatementParser
     ]
 
@@ -65,17 +66,27 @@ expressionStatementParser = do
 ifParser :: Parser Statement
 ifParser = do
     single $ T.Ident "if"
-    condition <- between (single T.Lparen) (single T.Rparen) exprParser
-    consequence <- blockParser (many statementParser)
+    condition <- betweenParens exprParser
+    consequence <- blockParserMany
     else_ <- optional $ single $ T.Ident "else"
     case else_ of 
         Nothing -> pure $ If condition consequence []
         Just _ -> do
-            alternative <- blockParser (many statementParser)
+            alternative <- blockParserMany
             pure $ If condition consequence alternative
+
+blockParserMany ::  Parser [Statement]
+blockParserMany = blockParser (many statementParser)
 
 blockParser :: Parser [Statement] -> Parser [Statement]
 blockParser p = between (single T.Lbrace) (single T.Rbrace) p
+
+functionDeclarationParser :: Parser Statement
+functionDeclarationParser = do 
+    single T.Function 
+    args <- betweenParens $ sepBy identParser (single T.Comma)
+    body <- blockParserMany
+    pure $ FunctionDeclaration args body
 
 identParser :: Parser Text
 identParser = 
@@ -96,10 +107,10 @@ exprTerm = choice $
   ]
 
 parens :: Parser Expr -> Parser Expr
-parens p = Parens <$> between (single T.Lparen) (single T.Rparen) p
+parens p = Parens <$> betweenParens p
 
--- braces :: Parser Expr -> Parser Expr
--- braces = between (single T.Lbrace) (single T.Rbrace)
+betweenParens :: Parser a -> Parser a
+betweenParens p = between (single T.Lparen) (single T.Rparen) p
 
 intParser :: Parser Expr
 intParser = 
