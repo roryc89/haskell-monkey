@@ -167,7 +167,7 @@ fn(){
                     ["x", "y"]
                     [ ExpressionStatement $ Plus (Identifier "x") (Identifier "y")
                     ]
-                , ExpressionStatement $FunctionDeclaration 
+                , ExpressionStatement $ FunctionDeclaration 
                     []
                     [ Return $ Plus (Identifier "x") (Int 1)
                     ]
@@ -176,31 +176,41 @@ fn(){
 
           parseProgram input `shouldBe` Right expected
 
-      it "should parse simple call expressions" $ do
+      it "should parse a simple call expression (single parser)" $ do
           let input = [text|
 myFn(1, 2);
-otherFn();
+|];
+
+          let expected = CallExpression (Identifier "myFn") [Int 1, Int 2]
+                
+          parseTokensThenRunParser (callExprParser exprTerm) input `shouldBe` Right expected
+
+      it "should parse a simple call expression (full parser)" $ do
+          let input = [text|
+myFn(1, 2);
 |];
 
           let expected = 
                 [ ExpressionStatement $ CallExpression (Identifier "myFn") [Int 1, Int 2]
-                , ExpressionStatement $ CallExpression (Identifier "otherFn") []
                 ]
                 
-
           parseProgram input `shouldBe` Right expected
---       it "should parse higher order call expressions" $ do
---           let input = [text|
--- higherFn1(x)();
--- higherFn2(1, fn(x) {
--- });
--- |];
 
---           let expected = 
---                 [ ExpressionStatement $ CallExpression (CallExpression (Identifier "higherFn1") [Identifier "x"]) []
---                 , ExpressionStatement $ CallExpression (Identifier "otherFn") []
---                 ]
+      it "should parse higher order call expressions" $ do
+          let input = [text|
+higherFn(1, fn(x) {
+  return x * otherFn();
+});
+|];
+
+
+          let expected = 
+                [ ExpressionStatement $ CallExpression (Identifier "higherFn") 
+                    [ Int 1
+                    , FunctionDeclaration ["x"] 
+                        [ Return $ Times (Identifier "x") (CallExpression (Identifier "otherFn") [])
+                        ]
+                    ]
+                ]
                 
-
---           parseProgram input `shouldBe` Right expected
--- ExpressionStatement $ CallExpression (CallExpression (Identifier "higherFn1") [Identifier "x"]) []
+          parseProgram input `shouldBe` Right expected

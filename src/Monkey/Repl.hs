@@ -1,8 +1,11 @@
 module Monkey.Repl where 
 
 import           Control.Monad     (unless)
-import Data.Text as T
-import Monkey.Lexer
+import qualified Data.Text as T
+import Monkey.Parser
+import Monkey.Object
+import Monkey.Ast
+import qualified Monkey.Eval as Eval
 import           System.IO
 
 main :: IO ()
@@ -10,7 +13,7 @@ main = do
   input <- read'
   unless 
     (input == ":q") 
-      $ print' (eval' input)
+      $ print' (evalProgram input)
       >> main
 
 
@@ -20,13 +23,17 @@ read' =
     >> hFlush stdout
     >> getLine
 
+evalProgramAndAst :: String -> String
+evalProgramAndAst input = show (evalProgram input, evalAst input)
 
-eval' :: String -> String
-eval' = show . parseMonkeyTokens . T.pack
-  -- Try the following ones from `EvaluatorExamples.hs`:
-  -- capitalizer input
-  -- simpleCalc input
-  -- emojiFinder input
+evalProgram :: String -> String
+evalProgram = either show showEvaled . fmap Eval.eval . parseProgram . T.pack
+
+showEvaled :: Eval.Evald -> String
+showEvaled = either show prettyPrintObject
+
+evalAst :: String -> String
+evalAst = either show (T.unpack . prettyPrintStatements) . parseProgram . T.pack
 
 
 print' :: String -> IO ()

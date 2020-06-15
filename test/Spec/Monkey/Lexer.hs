@@ -14,7 +14,7 @@ rightMonkeys l = Right (MonkeyTokens l)
 test = 
   describe "Monkey.Lexer" $ do
       it "should parse a simple input" $ do
-          let input = "=+(){},;"
+          let input = "=+ () {},;"
           parseMonkeyTokens input `shouldBe` rightMonkeys [ Assign, Plus, Lparen, Rparen, Lbrace, Rbrace, Comma, Semicolon ]
 
 

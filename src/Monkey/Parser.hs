@@ -101,15 +101,8 @@ exprParser = makeExprParser exprTerm operatorTable
 
 exprTerm :: Parser Expr
 exprTerm = choice $
-  [ 
---       callExprParser $ choice $
---         [ parens exprParser
---         , intParser
---         , boolParser
---         , Identifier <$> identParser
---         ]
---   , 
-  functionDeclarationParser
+  [ try $ callExprParser exprTerm
+  , functionDeclarationParser
   , parens exprParser
   , intParser
   , boolParser
@@ -118,9 +111,14 @@ exprTerm = choice $
 
 callExprParser :: Parser Expr -> Parser Expr
 callExprParser p = do 
-    expr <- exprParser
+    expr <- choice choices
     args <- betweenParens $ sepBy p (single T.Comma)
     pure $ CallExpression expr args
+    where 
+        choices = 
+            [ Identifier <$> identParser
+            , functionDeclarationParser
+            ]
 
 functionDeclarationParser :: Parser Expr
 functionDeclarationParser = do 

@@ -19,7 +19,11 @@ type Parser = Parsec Void MonkeyTokens
 
 operatorTable :: [[Operator Parser Expr]]
 operatorTable =
-  [ [ prefix T.Minus Negate
+  [ 
+--     [ binaryCall T.Lparen CallExpression 
+--     ]
+--   , 
+    [ prefix T.Minus Negate
     , prefix T.Bang Bang
     ]
   , [ binary T.Asterix Times
@@ -36,8 +40,11 @@ operatorTable =
     ]
   ]
 
+-- binaryCall :: MonkeyToken -> (Expr -> [Expr] -> Expr) -> Operator Parser Expr
+-- binaryCall token f = InfixL (_ <$> (f <$ monkeys token))
+
 binary :: MonkeyToken -> (Expr -> Expr -> Expr) -> Operator Parser Expr
-binary  token f = InfixL  (f <$ monkeys token)
+binary token f = InfixL  (f <$ monkeys token)
 
 prefix, postfix :: MonkeyToken -> (Expr -> Expr) -> Operator Parser Expr
 prefix  token f = Prefix  (f <$ monkeys token)

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 04a8b685b70e6728463396e3f52ea718b88110fd5f060cc7d1131179d87c8be9
+-- hash: 157809dae1178b698db04f4004171efb3b211ec26a751e58ade8eb4d0d346082
 
 name:           haskell-monkey
 version:        0.1.0.0
@@ -29,7 +29,9 @@ library
   exposed-modules:
       Lib
       Monkey.Ast
+      Monkey.Eval
       Monkey.Lexer
+      Monkey.Object
       Monkey.Parser
       Monkey.Parser.Operator
       Monkey.Repl
