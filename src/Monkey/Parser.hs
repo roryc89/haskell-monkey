@@ -44,7 +44,6 @@ statementParser =
   choice 
     [ letParser
     , ifParser
-    , functionDeclarationParser
     , returnParser
     , expressionStatementParser
     ]
@@ -82,12 +81,6 @@ blockParserMany = blockParser (many statementParser)
 blockParser :: Parser [Statement] -> Parser [Statement]
 blockParser p = between (single T.Lbrace) (single T.Rbrace) p
 
-functionDeclarationParser :: Parser Statement
-functionDeclarationParser = do 
-    single T.Function 
-    args <- betweenParens $ sepBy identParser (single T.Comma)
-    body <- blockParserMany
-    pure $ FunctionDeclaration args body
 
 returnParser :: Parser Statement
 returnParser = do 
@@ -95,13 +88,6 @@ returnParser = do
     result <- exprParser
     single T.Semicolon
     pure $ Return result
-
-callExprParser :: Parser Statement
-callExprParser = do 
-    single T.Function 
-    args <- betweenParens $ sepBy identParser (single T.Comma)
-    body <- blockParserMany
-    pure $ FunctionDeclaration args body
 
 identParser :: Parser Text
 identParser = 
@@ -115,11 +101,33 @@ exprParser = makeExprParser exprTerm operatorTable
 
 exprTerm :: Parser Expr
 exprTerm = choice $
-  [ parens exprParser
+  [ 
+--       callExprParser $ choice $
+--         [ parens exprParser
+--         , intParser
+--         , boolParser
+--         , Identifier <$> identParser
+--         ]
+--   , 
+  functionDeclarationParser
+  , parens exprParser
   , intParser
   , boolParser
   , Identifier <$> identParser
   ]
+
+callExprParser :: Parser Expr -> Parser Expr
+callExprParser p = do 
+    expr <- exprParser
+    args <- betweenParens $ sepBy p (single T.Comma)
+    pure $ CallExpression expr args
+
+functionDeclarationParser :: Parser Expr
+functionDeclarationParser = do 
+    single T.Function 
+    params <- betweenParens $ sepBy identParser (single T.Comma)
+    body <- blockParserMany
+    pure $ FunctionDeclaration params body
 
 parens :: Parser Expr -> Parser Expr
 parens p = Parens <$> betweenParens p

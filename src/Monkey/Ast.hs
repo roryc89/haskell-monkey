@@ -19,12 +19,12 @@ data Statement
     = Let Text Expr
     | ExpressionStatement Expr
     | If Expr [Statement] [Statement]
-    | FunctionDeclaration [Text] [Statement]
     | Return Expr
     deriving(Show, Eq)
 
 data Expr
     = Identifier Text
+    | FunctionDeclaration [Text] [Statement]
     | CallExpression Expr [Expr]
     | Parens Expr
     | BoolE Bool

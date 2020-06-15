@@ -155,19 +155,19 @@ if(true){
           let input = [text|
 fn (x, y){ 
   x + y; 
-}
+};
 
 fn(){ 
   return x + 1;
-}
+};
 |];
 
           let expected = 
-                [ FunctionDeclaration 
+                [ ExpressionStatement $ FunctionDeclaration 
                     ["x", "y"]
                     [ ExpressionStatement $ Plus (Identifier "x") (Identifier "y")
                     ]
-                , FunctionDeclaration 
+                , ExpressionStatement $FunctionDeclaration 
                     []
                     [ Return $ Plus (Identifier "x") (Int 1)
                     ]
