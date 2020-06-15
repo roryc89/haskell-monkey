@@ -18,6 +18,7 @@ data Node
 data Statement
     = Let Text Expr
     | ExpressionStatement Expr
+    | If Expr [Statement] [Statement]
     deriving(Show, Eq)
 
 data Expr

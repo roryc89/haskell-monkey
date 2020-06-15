@@ -131,3 +131,22 @@ false;
                 ]
 
           parseProgram input `shouldBe` Right expected
+
+      it "should parse an if statement" $ do
+          let input = [text|
+if(true){
+  true;
+}else{
+  false;
+}
+|];
+
+          let expected = 
+                If (BoolE True) 
+                    [ ExpressionStatement $ BoolE True
+                    ]
+                    [ ExpressionStatement $ BoolE False
+                    ]
+                
+
+          parseTokensThenRunParser ifParser input `shouldBe` Right expected

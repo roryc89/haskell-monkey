@@ -3,6 +3,7 @@
 
 module Monkey.Parser where 
 
+import Debug.Trace
 import Control.Monad.Combinators.Expr
 import Control.Monad
 import Data.Text (Text)
@@ -18,10 +19,13 @@ import           Text.Megaparsec.Char
 type Parser = Parsec Void MonkeyTokens
 
 parseProgram :: Text -> Either ErrorContainer [Statement]
-parseProgram input = 
+parseProgram = parseTokensThenRunParser statementsParser
+
+parseTokensThenRunParser :: Parsec Void MonkeyTokens a -> Text -> Either ErrorContainer a
+parseTokensThenRunParser parser input = 
     case parseMonkeyTokens input of 
     Left tokenErrs -> Left $ TextParseErrors tokenErrs
-    Right tokens -> case parseAst tokens of 
+    Right tokens -> case runParser parser "" tokens of 
         Left tokenErrs -> Left $ TokenParseErrors tokenErrs
         Right statements -> Right statements
 
@@ -39,6 +43,7 @@ statementParser :: Parser Statement
 statementParser = 
   choice 
     [ letParser
+    , ifParser
     , expressionStatementParser
     ]
 
@@ -56,6 +61,21 @@ expressionStatementParser = do
     e <- exprParser
     single T.Semicolon  
     pure $ ExpressionStatement e
+
+ifParser :: Parser Statement
+ifParser = do
+    single $ T.Ident "if"
+    condition <- between (single T.Lparen) (single T.Rparen) exprParser
+    consequence <- blockParser (many statementParser)
+    else_ <- optional $ single $ T.Ident "else"
+    case else_ of 
+        Nothing -> pure $ If condition consequence []
+        Just _ -> do
+            alternative <- blockParser (many statementParser)
+            pure $ If condition consequence alternative
+
+blockParser :: Parser [Statement] -> Parser [Statement]
+blockParser p = between (single T.Lbrace) (single T.Rbrace) p
 
 identParser :: Parser Text
 identParser = 
