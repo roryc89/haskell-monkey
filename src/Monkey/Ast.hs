@@ -22,10 +22,11 @@ data Statement
 
 data Expr
     = Identifier Text
+    | Parens Expr
     | BoolE Bool
     | Int Integer
     | Bang Expr
-    | MinusPrefix Expr
+    | Negate Expr
     | Plus Expr Expr
     | Minus Expr Expr
     | Times Expr Expr

@@ -69,10 +69,17 @@ exprParser = makeExprParser exprTerm operatorTable
 
 exprTerm :: Parser Expr
 exprTerm = choice $
-  [ intParser
+  [ parens exprParser
+  , intParser
   , boolParser
   , Identifier <$> identParser
   ]
+
+parens :: Parser Expr -> Parser Expr
+parens p = Parens <$> between (single T.Lparen) (single T.Rparen) p
+
+-- braces :: Parser Expr -> Parser Expr
+-- braces = between (single T.Lbrace) (single T.Rbrace)
 
 intParser :: Parser Expr
 intParser = 

@@ -19,7 +19,7 @@ type Parser = Parsec Void MonkeyTokens
 
 operatorTable :: [[Operator Parser Expr]]
 operatorTable =
-  [ [ prefix T.Minus MinusPrefix
+  [ [ prefix T.Minus Negate
     , prefix T.Bang Bang
     ]
   , [ binary T.Asterix Times

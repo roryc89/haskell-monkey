@@ -40,7 +40,7 @@ let foobar = 83838383;|];
 
           let expected = 
                 [ ExpressionStatement $ Bang $ Int 15
-                , ExpressionStatement $ MinusPrefix $ Int 15
+                , ExpressionStatement $ Negate $ Int 15
                 ]
 
           parseProgram input `shouldBe` Right expected
@@ -90,6 +90,44 @@ false;
                 , ExpressionStatement $ BoolE False
                 , ExpressionStatement $ Eq (Gt (Int 3) (Int 5)) (BoolE False)
                 , ExpressionStatement $ Eq (Lt (Int 3) (Int 5)) (BoolE True)
+                ]
+
+          parseProgram input `shouldBe` Right expected
+      it "should parse parenthesis" $ do
+          let input = [text|
+(1);
+|];
+
+          let expected = 
+                [ ExpressionStatement $ Parens (Int 1)
+                ]
+
+          parseProgram input `shouldBe` Right expected
+          let input2 = [text|
+(1 + 2);
+|];
+
+          let expected2 = 
+                [ ExpressionStatement $ Parens (Plus (Int 1) (Int 2))
+                ]
+
+          parseProgram input2 `shouldBe` Right expected2
+
+      it "should give precedence to expressions in parenthesis" $ do
+          let input = [text|
+1 + (2 + 3) + 4;
+(5  + 5) * 2;
+2 / (5 + 5);
+-(5 + 5);
+!(true == true);
+|];
+
+          let expected = 
+                [ ExpressionStatement $ Plus ((Plus (Int 1) (Parens (Plus (Int 2) (Int 3))))) (Int 4)
+                , ExpressionStatement $ Times (Parens (Plus (Int 5) (Int 5))) (Int 2)
+                , ExpressionStatement $ Divide (Int 2) (Parens (Plus (Int 5) (Int 5))) 
+                , ExpressionStatement $ Negate (Parens (Plus (Int 5) (Int 5)))
+                , ExpressionStatement $ Bang (Parens (Eq (BoolE True) (BoolE True)))
                 ]
 
           parseProgram input `shouldBe` Right expected
